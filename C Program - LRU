@@ -1,0 +1,53 @@
+#include<stdio.h>
+int main()
+{
+    int refstr_size, framesize;
+    int refstr[20], frame[5], time[20], page[20];
+    int index = 0;
+    int page_hits = 0, page_faults = 0;
+    printf("Enter the frame size: ");
+    scanf("%d", &framesize);
+    printf("Enter the size of reference string: ");
+    scanf("%d", &refstr_size);
+    printf("Enter the reference string: ");
+    for (int i = 0; i < refstr_size; i++) {
+        scanf("%d", &refstr[i]);
+    }
+    for (int i = 0; i < framesize; i++) {
+        frame[i] = -1;
+        time[i] = 0;
+    }
+    for (int i = 0; i < refstr_size; i++) {
+        int flag = 0, ref_flag = 0;
+        for (int j = 0; j < framesize; j++) {
+            if (refstr[i] == frame[j]) {
+                flag = 1;
+                time[j] = i + 1;
+                page[i] = 0; // Page hit
+                page_hits++;
+                break;
+            }
+        }
+        if (flag == 0) {
+            int min = time[0], pos = 0;
+            for (int j = 1; j < framesize; j++) {
+                if (time[j] < min) {
+                    min = time[j];
+                    pos = j;
+                }
+            }
+            frame[pos] = refstr[i];
+            time[pos] = i + 1;
+            page[i] = 1; // Page fault
+            page_faults++;
+        }
+        printf("\n%d\t", refstr[i]);
+        for (int j = 0; j < framesize; j++) {
+            printf("%d\t", frame[j]);
+        }
+        printf("%d", page[i]);
+    }
+    printf("\nNumber of page hits: %d", page_hits);
+    printf("\nNumber of page faults: %d\n", page_faults);
+    return 0;
+}
